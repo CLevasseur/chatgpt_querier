@@ -2,3 +2,4 @@ already_processed.txt
 .idea
 venv
 *.iml
+logs.txt

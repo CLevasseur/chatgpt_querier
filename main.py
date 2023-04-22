@@ -36,9 +36,10 @@ if __name__ == "__main__":
 
     highlights = Highlight.from_readwise_export(readwise_export)
 
+    already_processed_filepath = os.path.join(os.path.dirname(os.path.realpath(__file__)), "already_processed.txt")
     already_processed = set()
-    if os.path.exists('already_processed.txt'):
-        with open("already_processed.txt", "r") as f:
+    if os.path.exists(already_processed_filepath):
+        with open(already_processed_filepath, "r") as f:
             already_processed = set(f.read().splitlines())
 
     new_highlights = False
@@ -48,13 +49,14 @@ if __name__ == "__main__":
             continue
 
         new_highlights = True
+        print("Processing highlight %s (%s)" % (highlight.readwise_id, highlight.readwise_url))
         convert_highlight_to_flashcards(anki, deck_names, highlight)
 
-        with open("already_processed.txt", "a") as f:
+        with open(already_processed_filepath, "a") as f:
             f.write(highlight.readwise_id + "\n")
 
     if new_highlights:
-        # anki.sync()
+        anki.sync()
         print(f"Successfully synced with remote database")
 
 
