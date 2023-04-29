@@ -34,6 +34,7 @@ class Readwise:
 class Highlight:
     resource_title: str  # Book name, web page title...
     text: str
+    note: str
     readwise_id: str
     readwise_url: str
 
@@ -43,6 +44,6 @@ class Highlight:
 
         for resource in readwise_export:
             for highlight in resource["highlights"]:
-                highlights.append(Highlight(resource["title"], highlight["text"], str(highlight["id"]), highlight["readwise_url"]))
+                highlights.append(Highlight(resource["title"], highlight["text"], highlight["note"], str(highlight["id"]), highlight["readwise_url"]))
 
         return highlights

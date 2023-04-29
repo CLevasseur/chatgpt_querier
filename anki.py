@@ -1,4 +1,5 @@
 import json
+import re
 
 import requests as requests
 
@@ -25,6 +26,7 @@ class Anki:
 
     def add_flashcard(self, deck_name: str, front_text: str, back_text: str, highlight: Highlight):
         model_name = "Basic"  # Name of the note type you want to use
+        resource_title_without_special_chars = re.sub(r'\W+', '', highlight.resource_title)
         # Construct the data for the request
         data = {
             "action": "addNote",
@@ -40,7 +42,7 @@ class Anki:
                     "options": {
                         "allowDuplicate": False
                     },
-                    "tags": ["chatgpt", f"resource:{highlight.resource_title}" f"readwise_highlight_id:{highlight.readwise_id}"]
+                    "tags": ["chatgpt", f"resource:{resource_title_without_special_chars}", f"readwise_highlight_id:{highlight.readwise_id}"]
                 }
             }
         }

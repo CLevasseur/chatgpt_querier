@@ -11,10 +11,21 @@ from utils import parse_answer_as_flashcards, find_exact_deck_name
 
 def convert_highlight_to_flashcards(anki: Anki, deck_names: List[str], highlight: Highlight):
     context = ChatGPTContext()
-    question = "Make flashcards out of the text below, formatted like 'Q:{question}\nA:{answer}'. Name things explicitly. Do not use pronouns. Do not write anything else.\n"
-    question += highlight.text
 
-    answer = context.ask_chat_gpt(question)
+    if not highlight.note:
+        question = highlight.text + "\n\nCan you make at most 2 questions out of this ?"
+        _ = context.ask_chat_gpt(question)
+
+        question = "Can you give a concise answer to those questions, formatted like 'Q:{question}\nA:{answer}' ? Don't write anything else."
+        answer = context.ask_chat_gpt(question)
+    else:
+        question = highlight.text + "\n\n" + highlight.note
+        if not (question.endswith("?") or question.endswith(".")):
+            question += "."
+
+        question += " Make flashcards, formatted like 'Q:{question}\nA:{answer}'. Name things explicitly. Do not use pronouns. Do not write anything else."
+        answer = context.ask_chat_gpt(question)
+
     deck_question = f"What is the best deck for these flashcards ? Pick one of {', '.join(deck_names)}. Don't write anything else"
     deck_name = context.ask_chat_gpt(deck_question)
     exact_deck_name = find_exact_deck_name(deck_names, deck_name)
